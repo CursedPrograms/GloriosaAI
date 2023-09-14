@@ -9,12 +9,11 @@ Pillow (PIL)
 Optional: A dataset of images for training (recommended specifications: 128 x 128 resolution, RGB format, .PNG files)
 You can install the required Python packages using pip with the following commands:
 
-bash
-Copy code
 pip install tensorflow
 pip install numpy
 pip install matplotlib
 pip install Pillow
+
 How to Use
 Follow these steps to effectively utilize the provided code:
 
@@ -29,6 +28,7 @@ epochs: Set the number of training epochs you desire.
 batch_size: Define the batch size used during training.
 input_dim: Specify the dimension of the random noise input for the generator.
 image_shape: Set the shape of the images in your dataset (e.g., (128, 128, 3) for 128x128 resolution RGB images).
+
 3. Training
 Run the script, and the GAN will begin training. During training, it will periodically save generated images and model weights in the output_images and saved_models directories, respectively.
 
@@ -45,11 +45,3 @@ The generator and discriminator model weights will be automatically saved to the
 
 6. Post-Training Usage
 After training is complete, you can use the trained generator to generate new images by loading the saved generator model weights.
-
-Tips and Customization
-Here are some tips and customization options:
-
-Customize the architecture of the generator and discriminator networks by modifying the build_generator and build_discriminator functions.
-Fine-tune learning rates in the discriminator.compile and gan.compile sections for optimal convergence.
-Adapt the code to load your custom dataset by replacing the load_and_preprocess_dataset function.
-Experiment with different values for input_dim, epochs, and batch_size to achieve your desired results.
