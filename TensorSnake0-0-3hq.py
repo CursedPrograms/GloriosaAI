@@ -36,8 +36,8 @@ def build_discriminator(input_shape):
     discriminator.add(Dense(1, activation='sigmoid'))
     return discriminator
 
-epochs = 10000
-batch_size = 4               
+epochs = 120000
+batch_size = 1               
 input_dim = 100
 output_dir = "output_images"
 model_save_dir = "saved_models"
