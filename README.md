@@ -5,6 +5,8 @@ TensorFlow (tested with TensorFlow 2.x)
 NumPy
 Matplotlib
 Pillow (PIL)
+OpenCV
+
 Optional: 
 
 A dataset of images for training (128 x 128 resolution / 1024 x 1024 resolution (0.0.2.HQ), RGB format)
@@ -16,3 +18,4 @@ pip install tensorflow
 pip install numpy
 pip install matplotlib
 pip install Pillow
+pip install opencv-python
