@@ -5,7 +5,9 @@ TensorFlow (tested with TensorFlow 2.x)
 NumPy
 Matplotlib
 Pillow (PIL)
-Optional: A dataset of images for training (128 x 128 resolution, RGB format)
+Optional: 
+
+A dataset of images for training (128 x 128 resolution / 1024 x 1024 resolution (HQ), RGB format)
 
 pip install tensorflow
 pip install numpy
