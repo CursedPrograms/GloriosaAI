@@ -17,12 +17,12 @@ if gpus:
 
 def build_generator(input_dim):
     generator = Sequential()
-    generator.add(Dense(4 * 4 * 1024, input_dim=input_dim))
-    generator.add(Reshape((4, 4, 1024)))
-    generator.add(Conv2DTranspose(512, (4, 4), strides=(4, 4), padding='same', activation='relu'))    
-    generator.add(Conv2DTranspose(256, (4, 4), strides=(4, 4), padding='same', activation='relu'))    
-    generator.add(Conv2DTranspose(128, (4, 4), strides=(4, 4), padding='same', activation='relu'))    
-    generator.add(Conv2DTranspose(64, (4, 4), strides=(4, 4), padding='same', activation='relu'))    
+    generator.add(Dense(8 * 8 * 1024, input_dim=input_dim))         
+    generator.add(Reshape((8, 8, 1024)))
+    generator.add(Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    generator.add(Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    generator.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    generator.add(Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', activation='relu'))
     generator.add(Conv2D(3, (3, 3), padding='same', activation='sigmoid'))
     return generator
 
@@ -41,7 +41,7 @@ batch_size = 4
 input_dim = 100
 output_dir = "output_images"
 model_save_dir = "saved_models"
-image_shape = (1024, 1024, 3)      
+image_shape = (128, 128, 3)      
 os.makedirs(output_dir, exist_ok=True)
 os.makedirs(model_save_dir, exist_ok=True)
 
@@ -54,7 +54,7 @@ def load_and_preprocess_dataset(target_size, batch_size):
     )
     dataset = datagen.flow_from_directory(
         dataset_dir,         
-        target_size=target_size,
+        target_size=target_size,         
         batch_size=batch_size,
         class_mode='input'       
     )
@@ -75,31 +75,35 @@ gan = Model(gan_input, gan_output)
 
 gan.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(0.0002, 0.5))
 
-def generate_and_save_images(generator, epoch, output_dir, num_examples=16):
-    noise = np.random.normal(0, 1, (num_examples, input_dim))
-    generated_images = generator.predict(noise)
-    generated_images = 0.5 * generated_images + 0.5
+def generate_and_save_images(generator, epoch, output_dir, num_examples=1):
+    if epoch > 0 and epoch % 100 == 0:
+        noise = np.random.normal(0, 1, (num_examples, input_dim))
+        generated_images = generator.predict(noise)
+        generated_images = 0.5 * generated_images + 0.5
 
-    for i, img in enumerate(generated_images):
-        plt.figure(figsize=(1, 1))
-        plt.imshow(img)
-        plt.axis('off')
-        plt.savefig(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"), bbox_inches='tight', pad_inches=0.1)
-        plt.close()
+        for i in range(num_examples):
+            plt.figure(figsize=(1, 1))
+            plt.imshow(generated_images[i])
+            plt.axis('off')
+            plt.savefig(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"), bbox_inches='tight', pad_inches=0.1)
+            plt.close()
 
 for epoch in range(epochs):
     real_batch = next(dataset)
     real_images = real_batch[0]
-    
+
     noise = np.random.normal(0, 1, (real_images.shape[0], input_dim))
     generated_images = generator.predict(noise)
-    
+
+    generated_images = [tf.image.resize(image, (128, 128)) for image in generated_images]
+    generated_images = np.array(generated_images)
+
     real_labels = np.ones((real_images.shape[0], 1))
-    fake_labels = np.zeros((real_images.shape[0], 1))
-    
+    fake_labels = np.zeros((generated_images.shape[0], 1))
+
     merged_images = np.concatenate([real_images, generated_images], axis=0)
     merged_labels = np.concatenate([real_labels, fake_labels], axis=0)
-    
+
     indices = np.arange(merged_images.shape[0])
     np.random.shuffle(indices)
     merged_images = merged_images[indices]
@@ -112,13 +116,13 @@ for epoch in range(epochs):
 
     if epoch % 100 == 0:
         print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss[0]} | D Accuracy: {100 * d_loss[1]} | G Loss: {g_loss}")
-        
-        for i in range(4):           
-            generated_image = generated_images[i]
-            generated_image = (generated_image * 255).astype(np.uint8)
-            generated_image = Image.fromarray(generated_image)
-            generated_image.save(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"))
-    
+
+    for i in range(len(generated_images)):           
+        generated_image = generated_images[i]
+        generated_image = (generated_image * 255).astype(np.uint8)
+        generated_image = Image.fromarray(generated_image)
+        generated_image.save(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"))
+
     if epoch % 1000 == 0:
         generator_model_save_path = os.path.join(model_save_dir, f"gan_generator_weights_epoch_{epoch}.h5")
         generator_architecture_path = generator_model_save_path.replace(".h5", "_architecture.json")
