@@ -4,8 +4,17 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.layers import Dense, Reshape, Conv2DTranspose
 from tensorflow.keras.models import model_from_json
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from tensorflow.keras import Sequential
 from PIL import Image
+
+def build_generator(input_shape):
+    generator = Sequential()
+    generator.add(Dense(7 * 7 * 256, input_shape=input_shape))     
+    generator.add(Reshape((7, 7, 256)))
+    generator.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    generator.add(Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+    generator.add(Conv2D(3, (7, 7), padding='same', activation='sigmoid'))
+    return generator
 
 def load_models(model_dir):
     models = []
@@ -23,41 +32,33 @@ def load_models(model_dir):
             models.append(model)
     return models
 
-def generate_and_save_images(models, output_dir, input_dim, num_examples=16):
+def generate_and_save_images(models, output_dir, input_shape, num_examples=16):
     os.makedirs(output_dir, exist_ok=True)
-    noise = np.random.normal(0, 1, (num_examples, input_dim))
     
     for i, model in enumerate(models):
+        expected_shape = model.input_shape[1:]          
+        noise = np.random.normal(0, 1, (num_examples, *expected_shape))      
         generated_images = model.predict(noise)
-        generated_images = 0.5 * generated_images + 0.5
         
         for j, img in enumerate(generated_images):
-            plt.figure(figsize=(1, 1))
-            plt.imshow(img)
-            plt.axis('off')
+            img = (img * 255).astype(np.uint8)       
+            img = Image.fromarray(img)
             save_path = os.path.join(output_dir, f"generated_image_model_{i}_sample_{j}.png")
-            plt.savefig(save_path, bbox_inches='tight', pad_inches=0.1)
-            plt.close()
+            img.save(save_path)
 
 def main():
-    input_dim = 100
+    input_shape = (28, 28, 3)          
     model_dir = "models"
     output_image_dir = "image_blends"
-    output_model_dir = "model_blends"
-    
+
     models = load_models(model_dir)
-    
+
     if not models:
         print("No models found in the 'models' folder.")
         return
-    
-    generate_and_save_images(models, output_image_dir, input_dim)
-    
-    os.makedirs(output_model_dir, exist_ok=True)
-    for i, model in enumerate(models):
-        model_save_path = os.path.join(output_model_dir, f"blended_model_{i}.h5")
-        model.save(model_save_path)
-        print(f"Saved blended model {i} to {model_save_path}")
+
+    generate_and_save_images(models, output_image_dir, input_shape)
+    print("Images generated and saved successfully!")
 
 if __name__ == "__main__":
     main()
