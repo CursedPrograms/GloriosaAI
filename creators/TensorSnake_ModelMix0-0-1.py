@@ -15,11 +15,9 @@ def load_models(model_dir):
             architecture_path = os.path.join(model_dir, filename)
             weights_path = os.path.join(model_dir, f"{model_name}.h5")
             
-            # Load the model architecture from JSON
             with open(architecture_path, "r") as json_file:
                 model = model_from_json(json_file.read())
             
-            # Load the model weights
             model.load_weights(weights_path)
             
             models.append(model)
