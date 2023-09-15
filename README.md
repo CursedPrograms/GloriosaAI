@@ -7,7 +7,7 @@ Matplotlib
 Pillow (PIL)
 Optional: 
 
-A dataset of images for training (128 x 128 resolution / 1024 x 1024 resolution (HQ), RGB format)
+A dataset of images for training (128 x 128 resolution / 1024 x 1024 resolution (0.0.2.HQ), RGB format)
 
 TensorSnake0-0-3hq.py - 128 x 128 (Recommended)
 TensorSnake0-0-2-hq.py - 1024 x 1024
