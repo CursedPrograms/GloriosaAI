@@ -79,21 +79,17 @@ for epoch in range(epochs):
         generator_model_save_path = os.path.join(model_save_dir, f"gan_generator_weights_epoch_{epoch}.h5")
         generator_architecture_path = generator_model_save_path.replace(".h5", "_architecture.json")
         
-        # Save the generator model architecture to a JSON file
         with open(generator_architecture_path, "w") as json_file:
             json_file.write(generator.to_json())
         
-        # Save the generator model weights to an HDF5 file
         generator.save_weights(generator_model_save_path)
         
         discriminator_model_save_path = os.path.join(model_save_dir, f"gan_discriminator_weights_epoch_{epoch}.h5")
         discriminator_architecture_path = discriminator_model_save_path.replace(".h5", "_architecture.json")
         
-        # Save the discriminator model architecture to a JSON file
         with open(discriminator_architecture_path, "w") as json_file:
             json_file.write(discriminator.to_json())
         
-        # Save the discriminator model weights to an HDF5 file
         discriminator.save_weights(discriminator_model_save_path)
 
     for _ in range(0, len(dataset), batch_size):
