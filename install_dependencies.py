@@ -6,6 +6,7 @@ dependencies = [
     "matplotlib",
     "Pillow",
     "opencv-python",
+    "pyinstaller",
 ]
 
 for package in dependencies:
