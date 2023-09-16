@@ -7,6 +7,10 @@ from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from PIL import Image
 
+from tensorflow.python.client import device_lib
+
+print(device_lib.list_local_devices())
+
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
     try:
@@ -36,7 +40,7 @@ def build_discriminator(input_shape):
     discriminator.add(Dense(1, activation='sigmoid'))
     return discriminator
 
-epochs = 120000
+epochs = int(input("Enter the number of epochs: "))
 batch_size = 1               
 input_dim = 100
 output_dir = "output_images"
