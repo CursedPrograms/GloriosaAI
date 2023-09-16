@@ -143,51 +143,6 @@ for epoch in range(epochs):
         with open(generator_architecture_path, "w") as json_file:
             json_file.write(generator.to_json())
 
-        discriminator_model_save_path = os.path.join
-
-
-for epoch in range(epochs):
-    real_batch = next(dataset)
-    real_images = real_batch[0]
-
-    noise = np.random.normal(0, 1, (real_images.shape[0], latent_dim))
-    generated_images = generator.predict(noise)
-
-    generated_images = [tf.image.resize(image, (128, 128)) for image in generated_images]
-    generated_images = np.array(generated_images)
-
-    real_labels = np.ones((real_images.shape[0], 1))
-    fake_labels = np.zeros((generated_images.shape[0], 1))
-
-    merged_images = np.concatenate([real_images, generated_images], axis=0)
-    merged_labels = np.concatenate([real_labels, fake_labels], axis=0)
-
-    indices = np.arange(merged_images.shape[0])
-    np.random.shuffle(indices)
-    merged_images = merged_images[indices]
-    merged_labels = merged_labels[indices]
-
-    d_loss = discriminator.train_on_batch(merged_images, merged_labels)
-
-    noise = np.random.normal(0, 1, (real_images.shape[0], latent_dim))
-    g_loss = gan.train_on_batch(noise, real_labels)
-
-    if epoch % generation_interval == 0:
-        print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss[0]} | D Accuracy: {100 * d_loss[1]} | G Loss: {g_loss}")
-
-        for i in range(len(generated_images)):
-            generated_image = generated_images[i]
-            generated_image = (generated_image * 255).astype(np.uint8)
-            generated_image = Image.fromarray(generated_image)
-            generated_image.save(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"))
-
-    if epoch % 1000 == 0:
-        generator_model_save_path = os.path.join(model_save_dir, f"gan_generator_weights_epoch_{epoch}.h5")
-        generator_architecture_path = generator_model_save_path.replace(".h5", "_architecture.json")
-
-        with open(generator_architecture_path, "w") as json_file:
-            json_file.write(generator.to_json())
-
         discriminator_model_save_path = os.path.join(model_save_dir, f"gan_discriminator_weights_epoch_{epoch}.h5")
         discriminator_architecture_path = discriminator_model_save_path.replace(".h5", "_architecture.json")
 
