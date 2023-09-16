@@ -17,5 +17,5 @@ pip install matplotlib
 pip install Pillow
 pip install opencv-python
 
-TensorSnake - Art Showcase
+DyslexAI - Art Showcase
 https://www.youtube.com/watch?v=0XxlTf5EoUs
