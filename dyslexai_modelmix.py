@@ -54,7 +54,7 @@ def main():
     models = load_models(model_dir)
 
     if not models:
-        print("No models found in the 'models' folder.")
+        print("No models found in the 'blending_models' folder.")
         return
 
     generate_and_save_images(models, output_image_dir, input_shape)
