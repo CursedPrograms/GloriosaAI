@@ -1,4 +1,5 @@
-import os      
+import os
+
 scripts = {
     "1": {
         "name": "Run 'dyslexai_trainer.py'",
@@ -16,6 +17,11 @@ scripts = {
         "file_name": "dyslexai_modelmix.py"
     },
 	"4": {
+        "name": "Run 'dyslexai_styles.py'",
+        "description": "Style an image with DyslexAI",
+        "file_name": "style_transfer/dyslexai_styles.py"
+    },
+	"5": {
         "name": "Run 'install_dependencies.py'",
         "description": "Install necessary dependencies for DyslexAI",
         "file_name": "install_dependencies.py"
