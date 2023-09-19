@@ -1,18 +1,19 @@
-import os, shutil
+import os
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import time
-from tensorflow.keras.layers import Dense, Reshape, Flatten, Conv2D, Conv2DTranspose, Input
+from tensorflow.keras.layers import Dense, Reshape, Flatten, Conv2D, Conv2DTranspose, Input, LeakyReLU, BatchNormalization
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.python.client import device_lib
 from PIL import Image
-from preprocess_data import image_paths, labels
+from preprocess_data import image_paths, labels 
 
-print(device_lib.list_local_devices())
+# Check available devices
+print(tf.config.experimental.list_physical_devices('GPU'))
 
+# Set GPU memory growth
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
     try:
@@ -21,25 +22,33 @@ if gpus:
     except RuntimeError as e:
         print(e)
 
+# Directories
+data_directory = 'training_data'
+output_base_dir = "output_images"
+model_save_base_dir = "output_models"
+checkpoint_dir = "model_checkpoints"
+unique_identifier = int(time.time())
+output_dir = os.path.join(output_base_dir, f"output_image_{unique_identifier}")
+model_save_dir = os.path.join(model_save_base_dir, f"output_model_{unique_identifier}")
+
+for directory in [output_dir, model_save_dir, checkpoint_dir]:
+    os.makedirs(directory, exist_ok=True)
+
+# Hyperparameters
 epochs = int(input("Enter the number of epochs (recommended: 10,000): "))
 batch_size = int(input("Enter the batch size (recommended: 1): "))
 latent_dim = int(input("Enter the latent dimension (recommended: 100): "))
 generation_interval = int(input("Enter the generation interval (recommended: 100) (e.g., every X epochs): "))
-random_seed = int(input("Enter the number of seed: "))
+random_seed = int(input("Enter the random seed: "))
 
+# Random seeds
 np.random.seed(random_seed)
 tf.random.set_seed(random_seed)
 
+# Image shape
 image_shape = (128, 128, 3)
 
-checkpoint_dir = "model_checkpoints"
-os.makedirs(checkpoint_dir, exist_ok=True)
-
-data_directory = 'training_data'
-
-image_height = 128
-image_width = 128
-
+# Function to copy checkpoints
 def copy_checkpoint(original_path, new_name, model_name):
     checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_0.h5"
     new_checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_1.h5"
@@ -53,9 +62,11 @@ def copy_checkpoint(original_path, new_name, model_name):
     else:
         print(f"{model_name} checkpoint file not found at: {checkpoint_path}.")
 
+# Copy checkpoints
 copy_checkpoint("generator", "gan_generator", "generator")
 copy_checkpoint("discriminator", "gan_discriminator", "discriminator")
 
+# Build generator
 def build_generator(latent_dim):
     generator = Sequential()
     generator.add(Dense(8 * 8 * 1024, input_dim=latent_dim))
@@ -67,6 +78,7 @@ def build_generator(latent_dim):
     generator.add(Conv2D(3, (3, 3), padding='same', activation='sigmoid'))
     return generator
 
+# Build discriminator
 def build_discriminator(input_shape):
     discriminator = Sequential()
     discriminator.add(Conv2D(64, (3, 3), strides=(2, 2), padding='same', input_shape=input_shape, activation='relu'))
@@ -77,37 +89,40 @@ def build_discriminator(input_shape):
     discriminator.add(Dense(1, activation='sigmoid'))
     return discriminator
 
+# Initialize models
 generator = build_generator(latent_dim)
 discriminator = build_discriminator(image_shape)
 
-generator_weights_path = os.path.join(checkpoint_dir, "gan_generator_weights_epoch_1.h5")
-discriminator_weights_path = os.path.join(checkpoint_dir, "gan_discriminator_weights_epoch_1.h5")
+# Paths for initial weights
+generator_weights_path = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_1.h5")
+discriminator_weights_path = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_1.h5")
 
+# Load initial weights if they exist
 if not os.path.exists(generator_weights_path) or not os.path.exists(discriminator_weights_path):
     print(f"Weights file not found at: {checkpoint_dir}. Training from scratch.")
 else:
     generator.load_weights(generator_weights_path)
     discriminator.load_weights(discriminator_weights_path)
+    print("Generator weights loaded successfully.")
+    print("Discriminator weights loaded successfully")
 
     generator_last_epoch = int(generator_weights_path.split("_")[-1].split(".")[0])
     discriminator_last_epoch = int(discriminator_weights_path.split("_")[-1].split(".")[0])
 
-    if generator_last_epoch > discriminator_last_epoch:
-        initial_epoch = generator_last_epoch
-    else:
-        initial_epoch = discriminator_last_epoch
+    initial_epoch = max(generator_last_epoch, discriminator_last_epoch)
 
+print(f"Initial epoch set to: {initial_epoch}")
+
+# Custom accuracy metric
 def custom_accuracy(y_true, y_pred):
     threshold = 0.5
-
     y_pred_binary = tf.cast(y_pred > threshold, tf.float32)
-
     correct_predictions = tf.reduce_sum(tf.cast(tf.equal(y_pred_binary, y_true), tf.float32))
     total_samples = tf.cast(tf.shape(y_true)[0], tf.float32)
     accuracy = correct_predictions / total_samples
-
     return accuracy
 
+# Load and preprocess dataset
 def load_and_preprocess_dataset(target_size, batch_size):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_dir = os.path.join(script_dir, "training_data")
@@ -126,6 +141,7 @@ def load_and_preprocess_dataset(target_size, batch_size):
 
     return dataset
 
+# Function to generate and save images
 def generate_and_save_images(generator, epoch, output_dir, num_examples=1):
     if epoch > 0 and epoch % 100 == 0:
         noise = np.random.normal(0, 1, (num_examples, latent_dim))
@@ -140,19 +156,10 @@ def generate_and_save_images(generator, epoch, output_dir, num_examples=1):
                         pad_inches=0.1)
             plt.close()
 
-output_base_dir = "output_images"
-model_save_base_dir = "output_models"
-unique_identifier = int(time.time())
-output_dir = os.path.join(output_base_dir, f"output_image_{unique_identifier}")
-model_save_dir = os.path.join(model_save_base_dir, f"output_model_{unique_identifier}")
-os.makedirs(output_dir, exist_ok=True)
-os.makedirs(model_save_dir, exist_ok=True)
-generator = build_generator(latent_dim)
-
+# Load and preprocess dataset
 dataset = load_and_preprocess_dataset(image_shape[:2], batch_size)
-generator = build_generator(latent_dim)
-discriminator = build_discriminator(image_shape)
 
+# Build discriminator and GAN
 discriminator.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(0.0002, 0.5), metrics=['accuracy'])
 discriminator.trainable = False
 
@@ -163,22 +170,7 @@ gan = Model(gan_input, gan_output)
 
 gan.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy', custom_accuracy])
 
-generator_checkpoint_callback = ModelCheckpoint(
-    os.path.join(checkpoint_dir, "gan_generator_weights.h5"),
-    save_weights_only=True,
-    verbose=1,
-    save_best_only=False,
-    save_freq=generation_interval       
-)
-discriminator_checkpoint_callback = ModelCheckpoint(
-    os.path.join(checkpoint_dir, "gan_discriminator_weights.h5"),
-    save_weights_only=True,
-    verbose=1,
-    save_best_only=False,
-    save_freq=generation_interval       
-)
-
-initial_epoch = 1
+# Determine initial epoch
 generator_last_epoch = 0
 discriminator_last_epoch = 0
 
@@ -192,39 +184,35 @@ for file in os.listdir(checkpoint_dir):
         if epoch > discriminator_last_epoch:
             discriminator_last_epoch = epoch
 
-if generator_last_epoch > discriminator_last_epoch:
-    initial_epoch = generator_last_epoch
-else:
-    initial_epoch = discriminator_last_epoch 
+initial_epoch = max(generator_last_epoch, discriminator_last_epoch)
 
-generator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_generator_weights_epoch_0.h5")
-discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_discriminator_weights_epoch_0.h5")
+# Function to save models
+def save_models(epoch, generator, discriminator, model_save_dir, initial_epoch):
+    if not os.path.exists(model_save_dir):
+        os.makedirs(model_save_dir)
 
-generator_model_save_path = os.path.join(model_save_dir, f"generator_weights_{epoch}.h5")
-discriminator_model_save_path = os.path.join(model_save_dir, f"discriminator_weights_{epoch}.h5")
+    generator_weights_path = os.path.join(model_save_dir, f"generator_weights_{epoch + initial_epoch}.h5")
+    discriminator_weights_path = os.path.join(model_save_dir, f"discriminator_weights_{epoch + initial_epoch}.h5")
+    generator.save_weights(generator_weights_path)
+    discriminator.save_weights(discriminator_weights_path)
 
-def save_models(epoch, generator, discriminator, model_save_dir):
-    generator.save_weights(generator_model_save_path)
-    discriminator.save_weights(discriminator_model_save_path)
-    
-    generator_architecture_path = generator_model_save_path.replace(".h5", "_architecture.json")
+    generator_architecture_path = os.path.join(model_save_dir, f"generator_architecture_{epoch + initial_epoch}.json")
     with open(generator_architecture_path, "w") as json_file:
         json_file.write(generator.to_json())
-    
-    discriminator_architecture_path = discriminator_model_save_path.replace(".h5", "_architecture.json")
+
+    discriminator_architecture_path = os.path.join(model_save_dir, f"discriminator_architecture_{epoch + initial_epoch}.json")
     with open(discriminator_architecture_path, "w") as json_file:
         json_file.write(discriminator.to_json())
 
+# Function to save initial models and trigger callbacks
 def save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir):
-    generator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_0.h5")
-    discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_0.h5")
-    
-    generator.save_weights(generator_checkpoint_filepath)
-    discriminator.save_weights(discriminator_checkpoint_filepath)
-    
-    generator_checkpoint_callback.on_epoch_end(epoch)
-    discriminator_checkpoint_callback.on_epoch_end(epoch)
+    generator_weights_path = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_0.h5")
+    discriminator_weights_path = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_0.h5")
 
+    generator.save_weights(generator_weights_path)
+    discriminator.save_weights(discriminator_weights_path)
+
+# Training loop
 for epoch in range(initial_epoch, epochs):
     real_batch = next(dataset)
     real_images = real_batch[0]
@@ -254,12 +242,12 @@ for epoch in range(initial_epoch, epochs):
             generated_image = Image.fromarray(generated_image)
             generated_image.save(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"))
         print(f"Epoch {epoch}/{epochs}, Discriminator Loss: {d_loss[0]}, Generator Loss: {g_loss}")
-        print(f"Image(s) saved to (output_images)")
+        print(f"Image(s) saved to {output_dir}")
 
     if epoch % 500 == 0:
-        print(f"Epoch {epoch}/{epochs}, Discriminator Loss: {d_loss[0]}, Generator Loss: {g_loss}")
+        print("Models saved to {checkpoint_dir}")
         save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir)
-        save_models(epochs, generator, discriminator, model_save_dir)
+        save_models(epochs, generator, discriminator, model_save_dir, initial_epoch)
 
 user_input = input("Training is complete. Do you want to create a video (yes/no)? ").strip().lower()
 
@@ -282,9 +270,4 @@ if user_input == "yes":
 
     os.system("python dyslexai_video_encoder.py")
 
-print(f"Saving generator checkpoint to: {generator_checkpoint_filepath}")
-print(f"Saving discriminator checkpoint to: {discriminator_checkpoint_filepath}")
-save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir)
-save_models(epochs, generator, discriminator, model_save_dir)
 print(f"Exiting the program at epoch {epoch}.")
-
