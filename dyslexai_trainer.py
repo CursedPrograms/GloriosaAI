@@ -192,10 +192,13 @@ if generator_last_epoch > discriminator_last_epoch:
 else:
     initial_epoch = discriminator_last_epoch 
 
+generator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_generator_weights_epoch_0.h5")
+discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_discriminator_weights_epoch_0.h5")
+
+generator_model_save_path = os.path.join(model_save_dir, "generator_weights.h5")
+discriminator_model_save_path = os.path.join(model_save_dir, "discriminator_weights.h5")
+
 def save_models(epoch, generator, discriminator, model_save_dir):
-    generator_model_save_path = os.path.join(model_save_dir, f"gan_generator_weights_epoch_{epoch}.h5")
-    discriminator_model_save_path = os.path.join(model_save_dir, f"gan_discriminator_weights_epoch_{epoch}.h5")
-    
     generator.save_weights(generator_model_save_path)
     discriminator.save_weights(discriminator_model_save_path)
     
@@ -206,6 +209,16 @@ def save_models(epoch, generator, discriminator, model_save_dir):
     discriminator_architecture_path = discriminator_model_save_path.replace(".h5", "_architecture.json")
     with open(discriminator_architecture_path, "w") as json_file:
         json_file.write(discriminator.to_json())
+
+def save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir):
+    generator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_0.h5")
+    discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_0.h5")
+    
+    generator.save_weights(generator_checkpoint_filepath)
+    discriminator.save_weights(discriminator_checkpoint_filepath)
+    
+    generator_checkpoint_callback.on_epoch_end(epoch)
+    discriminator_checkpoint_callback.on_epoch_end(epoch)
 
 for epoch in range(initial_epoch, epochs):
     real_batch = next(dataset)
@@ -240,19 +253,8 @@ for epoch in range(initial_epoch, epochs):
 
     if epoch % 500 == 0:
         print(f"Epoch {epoch}/{epochs}, Discriminator Loss: {d_loss[0]}, Generator Loss: {g_loss}")
-
-        generator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_{epoch}.h5")
-        discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_{epoch}.h5")
-
-        print(f"Saving generator checkpoint to: {generator_checkpoint_filepath}")
-        print(f"Saving discriminator checkpoint to: {discriminator_checkpoint_filepath}")
-
-        generator.save_weights(generator_checkpoint_filepath)
-        discriminator.save_weights(discriminator_checkpoint_filepath)
-
-        generator_checkpoint_callback.on_epoch_end(epoch)
-        discriminator_checkpoint_callback.on_epoch_end(epoch)
-        save_models(epoch, generator, discriminator, model_save_dir)
+        save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir)
+        save_models(epochs, generator, discriminator, model_save_dir)
 
 user_input = input("Training is complete. Do you want to create a video (yes/no)? ").strip().lower()
 
@@ -277,6 +279,6 @@ if user_input == "yes":
 
 print(f"Saving generator checkpoint to: {generator_checkpoint_filepath}")
 print(f"Saving discriminator checkpoint to: {discriminator_checkpoint_filepath}")
+save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir)
 save_models(epochs, generator, discriminator, model_save_dir)
 print(f"Exiting the program at epoch {epoch}.")
-
