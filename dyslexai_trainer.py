@@ -282,3 +282,4 @@ print(f"Saving discriminator checkpoint to: {discriminator_checkpoint_filepath}"
 save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir)
 save_models(epochs, generator, discriminator, model_save_dir)
 print(f"Exiting the program at epoch {epoch}.")
+
