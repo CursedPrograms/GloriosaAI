@@ -1,15 +1,15 @@
-import os
+import os, shutil
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import time
-import shutil
 from tensorflow.keras.layers import Dense, Reshape, Flatten, Conv2D, Conv2DTranspose, Input
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.python.client import device_lib
 from PIL import Image
+from preprocess_data import image_paths, labels
 
 print(device_lib.list_local_devices())
 
@@ -34,6 +34,11 @@ image_shape = (128, 128, 3)
 
 checkpoint_dir = "model_checkpoints"
 os.makedirs(checkpoint_dir, exist_ok=True)
+
+data_directory = 'training_data'
+
+image_height = 128
+image_width = 128
 
 def copy_checkpoint(original_path, new_name, model_name):
     checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_0.h5"
@@ -195,8 +200,8 @@ else:
 generator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_generator_weights_epoch_0.h5")
 discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_discriminator_weights_epoch_0.h5")
 
-generator_model_save_path = os.path.join(model_save_dir, "generator_weights.h5")
-discriminator_model_save_path = os.path.join(model_save_dir, "discriminator_weights.h5")
+generator_model_save_path = os.path.join(model_save_dir, "generator_weights_{epoch}.h5")
+discriminator_model_save_path = os.path.join(model_save_dir, "discriminator_weights_{epoch}.h5")
 
 def save_models(epoch, generator, discriminator, model_save_dir):
     generator.save_weights(generator_model_save_path)
