@@ -12,9 +12,9 @@ scripts = {
         "file_name": "dyslexai_video_encoder.py"
     },    
     "3": {
-        "name": "Run 'dyslexai_modelmix.py'",
-        "description": "Combine and mix trained models with DyslexAI",
-        "file_name": "dyslexai_modelmix.py"
+        "name": "Run 'dyslexai_modelout.py'",
+        "description": "Output images from trained models with DyslexAI",
+        "file_name": "dyslexai_modelout.py"
     },
 	"4": {
         "name": "Run 'dyslexai_styles.py'",
