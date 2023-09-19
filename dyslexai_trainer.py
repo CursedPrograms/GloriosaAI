@@ -21,22 +21,6 @@ if gpus:
     except RuntimeError as e:
         print(e)
 
-def copy_checkpoint(original_path, new_name, model_name):
-    checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_0.h5"
-    new_checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_01.h5"
-
-    if os.path.exists(new_checkpoint_path):
-        os.remove(new_checkpoint_path)
-
-    if os.path.exists(checkpoint_path):
-        os.rename(checkpoint_path, new_checkpoint_path)
-        print(f"Renamed {checkpoint_path} to {new_checkpoint_path}")
-    else:
-        print(f"{model_name} checkpoint file not found at: {checkpoint_path}.")
-
-copy_checkpoint("generator", "gan_generator", "Generator")
-copy_checkpoint("discriminator", "gan_discriminator", "Discriminator")
-
 epochs = int(input("Enter the number of epochs (recommended: 10,000): "))
 batch_size = int(input("Enter the batch size (recommended: 1): "))
 latent_dim = int(input("Enter the latent dimension (recommended: 100): "))
@@ -48,16 +32,24 @@ tf.random.set_seed(random_seed)
 
 image_shape = (128, 128, 3)
 
-def find_latest_checkpoint(directory, model_name):
-    checkpoint_files = [file for file in os.listdir(directory) if file.startswith(f"gan_{model_name}_weights_epoch_")]
-    if checkpoint_files:
-        latest_checkpoint = max(checkpoint_files, key=lambda x: int(x.split("_")[4].split(".")[0]))
-        return os.path.join(directory, latest_checkpoint)
-    else:
-        return None
-
 checkpoint_dir = "model_checkpoints"
 os.makedirs(checkpoint_dir, exist_ok=True)
+
+def copy_checkpoint(original_path, new_name, model_name):
+    checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_0.h5"
+    new_checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_1.h5"
+
+    if os.path.exists(new_checkpoint_path):
+        os.remove(new_checkpoint_path)
+
+    if os.path.exists(checkpoint_path):
+        os.rename(checkpoint_path, new_checkpoint_path)
+        print(f"Renamed {checkpoint_path} to {new_checkpoint_path}")
+    else:
+        print(f"{model_name} checkpoint file not found at: {checkpoint_path}.")
+
+copy_checkpoint("generator", "gan_generator", "generator")
+copy_checkpoint("discriminator", "gan_discriminator", "discriminator")
 
 def build_generator(latent_dim):
     generator = Sequential()
@@ -80,33 +72,25 @@ def build_discriminator(input_shape):
     discriminator.add(Dense(1, activation='sigmoid'))
     return discriminator
 
-discriminator = build_discriminator(image_shape)
 generator = build_generator(latent_dim)
+discriminator = build_discriminator(image_shape)
 
-generator_weights_path = find_latest_checkpoint(checkpoint_dir, "generator")
-discriminator_weights_path = find_latest_checkpoint(checkpoint_dir, "discriminator")
+generator_weights_path = os.path.join(checkpoint_dir, "gan_generator_weights_epoch_1.h5")
+discriminator_weights_path = os.path.join(checkpoint_dir, "gan_discriminator_weights_epoch_1.h5")
 
-generator_weights_path = "model_checkpoints/gan_generator_weights_epoch_01.h5"
-discriminator_weights_path = "model_checkpoints/gan_discriminator_weights_epoch_01.h5"
-
-if generator_weights_path is not None:
-    if os.path.exists(generator_weights_path):
-        generator.load_weights(generator_weights_path)
-        print(f"Loaded generator weights from: {generator_weights_path}")
-
-if discriminator_weights_path and os.path.exists(discriminator_weights_path):
+if not os.path.exists(generator_weights_path) or not os.path.exists(discriminator_weights_path):
+    print(f"Weights file not found at: {checkpoint_dir}. Training from scratch.")
+else:
+    generator.load_weights(generator_weights_path)
     discriminator.load_weights(discriminator_weights_path)
-    print(f"Loaded discriminator weights from: {discriminator_weights_path}")
-else:
-    print(f"Discriminator weights file not found at: {discriminator_weights_path}. Training from scratch or specify a valid path.")
 
-generator_last_epoch = int(generator_weights_path.split("_")[-1].split(".")[0])
-discriminator_last_epoch = int(discriminator_weights_path.split("_")[-1].split(".")[0])
+    generator_last_epoch = int(generator_weights_path.split("_")[-1].split(".")[0])
+    discriminator_last_epoch = int(discriminator_weights_path.split("_")[-1].split(".")[0])
 
-if generator_last_epoch > discriminator_last_epoch:
-    initial_epoch = generator_last_epoch
-else:
-    initial_epoch = discriminator_last_epoch
+    if generator_last_epoch > discriminator_last_epoch:
+        initial_epoch = generator_last_epoch
+    else:
+        initial_epoch = discriminator_last_epoch
 
 def custom_accuracy(y_true, y_pred):
     threshold = 0.5
@@ -246,9 +230,19 @@ for epoch in range(initial_epoch, epochs):
     g_loss = gan.train_on_batch(noise, real_labels)
 
     if epoch % generation_interval == 0:
+        for i in range(len(generated_images)):
+            generated_image = generated_images[i]
+            generated_image = (generated_image * 255).astype(np.uint8)
+            generated_image = Image.fromarray(generated_image)
+            generated_image.save(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"))
         print(f"Epoch {epoch}/{epochs}, Discriminator Loss: {d_loss[0]}, Generator Loss: {g_loss}")
-        generator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_0.h5")
-        discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_0.h5")
+        print(f"Image(s) saved to (output_images)")
+
+    if epoch % 500 == 0:
+        print(f"Epoch {epoch}/{epochs}, Discriminator Loss: {d_loss[0]}, Generator Loss: {g_loss}")
+
+        generator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_{epoch}.h5")
+        discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, f"gan_discriminator_weights_epoch_{epoch}.h5")
 
         print(f"Saving generator checkpoint to: {generator_checkpoint_filepath}")
         print(f"Saving discriminator checkpoint to: {discriminator_checkpoint_filepath}")
@@ -259,15 +253,6 @@ for epoch in range(initial_epoch, epochs):
         generator_checkpoint_callback.on_epoch_end(epoch)
         discriminator_checkpoint_callback.on_epoch_end(epoch)
         save_models(epoch, generator, discriminator, model_save_dir)
-
-        for i in range(len(generated_images)):
-            generated_image = generated_images[i]
-            generated_image = (generated_image * 255).astype(np.uint8)
-            generated_image = Image.fromarray(generated_image)
-            generated_image.save(os.path.join(output_dir, f"generated_image_epoch_{epoch}_sample_{i}.png"))
-
-    if epoch % 500 == 0:
-        print(f"Epoch {epoch}/{epochs}, Discriminator Loss: {d_loss[0]}, Generator Loss: {g_loss}")
 
 user_input = input("Training is complete. Do you want to create a video (yes/no)? ").strip().lower()
 
