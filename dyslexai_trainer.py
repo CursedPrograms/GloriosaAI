@@ -200,8 +200,8 @@ else:
 generator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_generator_weights_epoch_0.h5")
 discriminator_checkpoint_filepath = os.path.join(checkpoint_dir, "gan_discriminator_weights_epoch_0.h5")
 
-generator_model_save_path = os.path.join(model_save_dir, "generator_weights_{epoch}.h5")
-discriminator_model_save_path = os.path.join(model_save_dir, "discriminator_weights_{epoch}.h5")
+generator_model_save_path = os.path.join(model_save_dir, f"generator_weights_{epoch}.h5")
+discriminator_model_save_path = os.path.join(model_save_dir, f"discriminator_weights_{epoch}.h5")
 
 def save_models(epoch, generator, discriminator, model_save_dir):
     generator.save_weights(generator_model_save_path)
