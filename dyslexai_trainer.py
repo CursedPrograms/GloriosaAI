@@ -204,6 +204,7 @@ def save_models(epoch, generator, discriminator, model_save_dir, initial_epoch):
     with open(discriminator_architecture_path, "w") as json_file:
         json_file.write(discriminator.to_json())
 
+
 # Function to save initial models and trigger callbacks
 def save_and_trigger_callbacks(generator, discriminator, epoch, checkpoint_dir):
     generator_weights_path = os.path.join(checkpoint_dir, f"gan_generator_weights_epoch_0.h5")
