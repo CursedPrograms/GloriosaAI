@@ -1,5 +1,5 @@
 ## DyslexAI
-
+![DyslexAI Image](https://github.com/CursedPrograms/DyslexAI/blob/main/DyslexAI.png)
 ### dyslexai_trainer.py Hyperparameters:
 
 - **Epochs**:
