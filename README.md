@@ -1,29 +1,30 @@
-dyslexai_trainer.py hyperparameters:
+### dyslexai_trainer.py hyperparameters:
 
-Epochs:
+### Hyperparameters:
 
-Controls the number of training iterations.
-Batch Size:
+- **Epochs**:
+  - Controls the number of training iterations.
 
-Determines the number of data samples processed in each training step.
-Latent Dimension:
+- **Batch Size**:
+  - Determines the number of data samples processed in each training step.
 
-Defines the size of the latent space in the generative model.
-Generation Interval:
+- **Latent Dimension**:
+  - Defines the size of the latent space in the generative model.
 
-Sets how often generated images are saved during training.
-Learning Rate:
+- **Generation Interval**:
+  - Sets how often generated images are saved during training.
 
-Governs the step size during gradient descent optimization.
-Use Learning Rate Scheduler:
+- **Learning Rate**:
+  - Governs the step size during gradient descent optimization.
 
-Specifies whether to use a learning rate scheduler during training.
-Random Seed:
+- **Use Learning Rate Scheduler**:
+  - Specifies whether to use a learning rate scheduler during training.
 
-Seeds the random number generator for reproducibility.
-Noise Factor:
+- **Random Seed**:
+  - Seeds the random number generator for reproducibility.
 
-Controls the amount of noise added to the data for data augmentation.
+- **Noise Factor**:
+  - Controls the amount of noise added to the data for data augmentation.
 
 Prerequisites
 
