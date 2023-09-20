@@ -1,6 +1,6 @@
-## dyslexai_trainer.py Hyperparameters
+## DyslexAI
 
-### Hyperparameters:
+### dyslexai_trainer.py Hyperparameters:
 
 - **Epochs**:
   - Controls the number of training iterations.
