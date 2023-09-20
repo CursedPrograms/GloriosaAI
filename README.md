@@ -1,4 +1,4 @@
-### dyslexai_trainer.py hyperparameters:
+## dyslexai_trainer.py Hyperparameters
 
 ### Hyperparameters:
 
@@ -26,23 +26,28 @@
 - **Noise Factor**:
   - Controls the amount of noise added to the data for data augmentation.
 
-Prerequisites
+### Prerequisites:
 
-Python 3.x
-TensorFlow (tested with TensorFlow 2.x)
-NumPy
-Matplotlib
-Pillow (PIL)
-OpenCV
+- Python 3.x
+- TensorFlow (tested with TensorFlow 2.x)
+- NumPy
+- Matplotlib
+- Pillow (PIL)
+- OpenCV
 
-Compiler:
+### Compiler:
 
-PyInstaller
+- PyInstaller
 
-Optional: 
+### Optional:
 
-A dataset of images for training (128 x 128 resolution, RGB format)
+- A dataset of images for training (128 x 128 resolution, RGB format)
 
+### Installation:
+
+You can install the required Python packages using pip:
+
+```bash
 pip install tensorflow
 pip install numpy
 pip install matplotlib
