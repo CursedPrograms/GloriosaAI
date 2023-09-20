@@ -43,6 +43,8 @@
 
 - A dataset of images for training (128 x 128 resolution, RGB format)
 
+[DyslexAI - Art Showcase](https://www.youtube.com/watch?v=0XxlTf5EoUs)
+
 ### Installation:
 
 You can install the required Python packages using pip:
@@ -55,5 +57,4 @@ pip install Pillow
 pip install opencv-python
 pip install pyinstaller
 
-DyslexAI - Art Showcase
-https://www.youtube.com/watch?v=0XxlTf5EoUs
+
