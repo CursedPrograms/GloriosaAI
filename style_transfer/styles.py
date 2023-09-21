@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import subprocess
 
 output_dim = (128, 128)
 
