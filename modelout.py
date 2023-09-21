@@ -2,6 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import subprocess
 from tensorflow.keras.layers import Dense, Reshape, Conv2DTranspose
 from tensorflow.keras.models import model_from_json
 from tensorflow.keras import Sequential
