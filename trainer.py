@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import time
+import subprocess
 from tensorflow.keras.layers import Dense, Reshape, Flatten, Conv2D, Conv2DTranspose, Input, LeakyReLU, BatchNormalization
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
