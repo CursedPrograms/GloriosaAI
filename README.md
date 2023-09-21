@@ -23,9 +23,6 @@
 - **Random Seed**:
   - Seeds the random number generator for reproducibility.
 
-- **Noise Factor**:
-  - Controls the amount of noise added to the data for data augmentation.
-
 ### Prerequisites:
 
 - Python 3.x
