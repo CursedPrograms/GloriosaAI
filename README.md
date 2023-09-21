@@ -24,7 +24,7 @@
   - Seeds the random number generator for reproducibility.
 
 
-![DyslexAI Demo Image]((https://github.com/CursedPrograms/DyslexAI/blob/main/DyslexAI_Demo.png))
+![DyslexAI Demo Image](https://github.com/CursedPrograms/DyslexAI/blob/main/DyslexAI_Demo.png)
 
 ### Prerequisites:
 
