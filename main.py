@@ -51,7 +51,7 @@ def main():
             
             if os.path.exists(script_file_path):
                 try:
-                    os.system(f"python {script_file_path}")
+                    subprocess.run(["python", script_file_path])
                 except Exception as e:
                     print(f"An error occurred while running the script: {e}")
             else:
@@ -60,4 +60,4 @@ def main():
             print("Invalid choice. Please select a valid script number.")
 
 if __name__ == "__main__":
-    subprocess.run(["python", "main.py"])
+    main()
