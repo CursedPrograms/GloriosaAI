@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 def main():
     print("DyslexAI")
