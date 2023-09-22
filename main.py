@@ -6,7 +6,7 @@ def main():
 
     scripts = {
         "1": {
-            "name": "Run 'trainer'",
+            "name": "Run 'Trainer'",
             "description": "Train a Generative Adversarial Network (GAN)",
             "file_name": "trainer.py"
         },
@@ -26,7 +26,7 @@ def main():
             "file_name": "style_transfer/styles.py"
         },
         "00": {
-            "name": "Run 'Install dependencies'",
+            "name": "Run 'Install Dependencies'",
             "description": "Install necessary dependencies for DyslexAI",
             "file_name": "install_dependencies.py"
         },
