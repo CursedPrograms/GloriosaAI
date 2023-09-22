@@ -59,7 +59,7 @@ def get_float_input(prompt, recommended):
 epochs = get_integer_input("Enter the number of epochs (recommended: 10,000): ", 10000)
 batch_size = get_integer_input("Enter the batch size (recommended: 1): ", 1)
 print("Note: It is essential to keep the latent dimension consistent throughout training.")
-latent_dim = get_integer_input("Enter the latent dimension (recommended: 64): ", 64)
+latent_dim = get_integer_input("Enter the latent dimension (recommended: 128): ", 128)
 print(f"Latent dimension set to: {latent_dim}")
 generation_interval = get_integer_input("Enter the image generation interval (recommended: 25) (e.g., every X epochs): ", 25)
 learning_rate = get_float_input("Enter the learning rate (recommended: 0.0002): ", 0.0002)
