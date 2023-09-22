@@ -1,5 +1,5 @@
 ## DyslexAI
-## Prerequisite Folders:
+### Prerequisite Folders:
 
 ### Trainer
 - `training_data/class`
