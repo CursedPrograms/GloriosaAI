@@ -1,4 +1,19 @@
 ## DyslexAI
+## Prerequisite Folders:
+
+### Trainer
+- `training_data/class`
+
+### Video Encoder
+- `video_frames` (Also created by the Trainer)
+
+### Model Output
+- `input_models` (Copy the architecture and weights of both the discriminator and generator.)
+
+### Styles
+- `image_style`
+- `style_edit`
+
 ![DyslexAI Image](https://github.com/CursedPrograms/DyslexAI/blob/main/DyslexAI.png)
 ### dyslexai_trainer.py Hyperparameters:
 
