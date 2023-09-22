@@ -7,7 +7,7 @@
 ### Video Encoder
 - `video_frames` (Also created by the Trainer)
 
-### Model Output
+### ModelOut
 - `input_models` (Copy the architecture and weights of both the discriminator and generator.)
 
 ### Styles
