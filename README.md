@@ -14,7 +14,7 @@
 - `image_style`
 - `style_edit`
 
-### dyslexai_trainer.py Hyperparameters:
+### trainer.py Hyperparameters:
 
 - **Epochs**:
   - Controls the number of training iterations.
@@ -54,7 +54,7 @@
 
 - A dataset of images for training (128 x 128 resolution, RGB format)
 
-[DyslexAI - Art Showcase](https://www.youtube.com/watch?v=0XxlTf5EoUs)
+[GloriosaAI - Art Showcase](https://www.youtube.com/watch?v=0XxlTf5EoUs)
 
 ### Installation:
 
