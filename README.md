@@ -1,4 +1,4 @@
-## DyslexAI
+## GloriosaAI
 ### Prerequisite Folders:
 
 ### Trainer
@@ -14,8 +14,6 @@
 - `image_style`
 - `style_edit`
 
-
-![DyslexAI Image](https://github.com/CursedPrograms/DyslexAI/blob/main/DyslexAI.png)
 ### dyslexai_trainer.py Hyperparameters:
 
 - **Epochs**:
@@ -38,9 +36,6 @@
 
 - **Random Seed**:
   - Seeds the random number generator for reproducibility.
-
-
-![DyslexAI Demo Image](https://github.com/CursedPrograms/DyslexAI/blob/main/DyslexAI_Demo.png)
 
 ### Prerequisites:
 
