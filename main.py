@@ -12,22 +12,22 @@ def main():
         },
         "2": {
             "name": "Run 'Video Encoder",
-            "description": "Encode a video using DyslexAI",
+            "description": "Encode a video using GloriosaAI",
             "file_name": "video_encoder.py"
         },    
         "3": {
             "name": "Run 'ModelOut'",
-            "description": "Output images from trained models with DyslexAI",
+            "description": "Output images from trained models with GloriosaAI",
             "file_name": "modelout.py"
         },
         "4": {
             "name": "Run 'Style Transfer'",
-            "description": "Style an image with DyslexAI",
+            "description": "Style an image with GloriosaAI",
             "file_name": "style_transfer/styles.py"
         },
         "00": {
             "name": "Run 'Install Dependencies'",
-            "description": "Install necessary dependencies for DyslexAI",
+            "description": "Install necessary dependencies for GloriosaAI",
             "file_name": "install_dependencies.py"
         },
     }
