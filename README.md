@@ -1,4 +1,5 @@
 ## GloriosaAI
+![GloriosaAI](https://github.com/CursedPrograms/GloriosaAI/raw/main/Gloriosa.jpg)
 ### Prerequisite Folders:
 
 ### Trainer
