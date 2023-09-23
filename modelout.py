@@ -8,7 +8,17 @@ from tensorflow.keras.models import model_from_json
 from tensorflow.keras import Sequential
 from PIL import Image
 
-latent_dim = 250
+def get_integer_input(prompt, recommended):
+    while True:
+        try:
+            value = int(input(prompt))
+            if value < 0: 
+                raise ValueError
+            return value
+        except ValueError:
+            print(f"Please enter a valid integer. (Recommended: {recommended})")
+
+latent_dim = get_integer_input("Enter the latent dimension (recommended: 128): ", 128)
 
 def build_generator(input_shape):
     generator = Sequential()
@@ -69,4 +79,4 @@ def main():
     print("Images generated and saved successfully!")
 
 if __name__ == "__main__":
-    subprocess.run(["python", "main.py"])
+    main()
