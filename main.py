@@ -2,7 +2,7 @@ import os
 import subprocess
 
 def main():
-    print("DyslexAI")
+    print("GloriosaAI")
 
     scripts = {
         "1": {
