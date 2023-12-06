@@ -40,12 +40,12 @@
 
 ### Prerequisites:
 
-TensorFlow 2.14.0
-Numpy 1.26.2
-Matplotlib 3.8.2
-Pillow 10.1.0
-OpenCV-Python 4.8.1.78
-Flask 3.0.0
+- TensorFlow 2.14.0
+- Numpy 1.26.2
+- Matplotlib 3.8.2
+- Pillow 10.1.0
+- OpenCV-Python 4.8.1.78
+- Flask 3.0.0
 
 ### Compiler:
 
