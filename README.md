@@ -60,7 +60,9 @@
 ### Installation:
 
 You can install the required Python packages using pip:
-
+```bash
+pip install -r requirements.txt
+```
 For GPU
 ```bash
 nvidia-smi
