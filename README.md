@@ -41,7 +41,7 @@
 ### Prerequisites:
 
 - Python 3.11.4
-- TensorFlow (tested with TensorFlow 2.x)
+- TensorFlow (tested with TensorFlow 2.14)
 - NumPy
 - Matplotlib
 - Pillow (PIL)
