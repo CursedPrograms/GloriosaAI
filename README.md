@@ -40,7 +40,7 @@
 
 ### Prerequisites:
 
-- Python 3.x
+- Python 3.11.4
 - TensorFlow (tested with TensorFlow 2.x)
 - NumPy
 - Matplotlib
