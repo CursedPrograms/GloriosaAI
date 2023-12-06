@@ -61,12 +61,25 @@
 
 You can install the required Python packages using pip:
 
+For GPU
+```bash
+nvidia-smi
+pip install --upgrade pip
+pip install --extra-index-url https://pypi.nvidia.com tensorrt-bindings==8.6.1 tensorrt-libs==8.6.1
+pip install -U tensorflow[and-cuda]
+```
+For CPU
 ```bash
 pip install tensorflow
+```
+Additional Packages
+```bash
 pip install numpy
 pip install matplotlib
 pip install Pillow
 pip install opencv-python
 pip install pyinstaller
+```
+
 
 
