@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GloriosaAI Controller</title>
+</head>
+<body>
+    <h1>GloriosaAI Controller</h1>
+    <form action="/run_script" method="post">
+        <label for="script_choice">Choose a script:</label>
+        <select id="script_choice" name="script_choice">
+            {% for key, script_info in scripts.items() %}
+                <option value="{{ key }}">{{ script_info['name'] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Run Script</button>
+    </form>
+</body>
+</html>
