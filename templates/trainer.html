@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Output</title>
+    <title>{{ script_name }} Output</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='output-style.css') }}">
 </head>
 <body>
     <h1>{{ script_name }} Output</h1>
     <pre>{{ output }}</pre>
 </body>
+<footer id="dynamicFooter"></footer>
+<script src="https://cursedprograms.github.io/cursedentertainment/scripts/footer.js"></script>
 </html>
