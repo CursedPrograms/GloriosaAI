@@ -47,6 +47,10 @@ if os.path.exists(main_script_path):
 def index():
     return render_template('index.html', scripts=scripts)
 
+def get_data():
+    data = {'message': 'Hello from Flask!'}
+    return jsonify(data)
+
 @app.route('/run_script', methods=['POST'])
 def run_script():
     user_choice = request.form.get('script_choice')
