@@ -39,11 +39,13 @@ scripts = {
 
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 
+main_script_path = os.path.join(current_script_dir, "main.py")
+if os.path.exists(main_script_path):
+    subprocess.run(["python", main_script_path])
 
 @app.route('/')
 def index():
     return render_template('index.html', scripts=scripts)
-
 
 @app.route('/run_script', methods=['POST'])
 def run_script():
@@ -65,7 +67,6 @@ def run_script():
             return f"Script file '{script_file_name}' does not exist."
     else:
         return "Invalid script choice."
-
 
 if __name__ == "__main__":
     app.run(debug=True)
