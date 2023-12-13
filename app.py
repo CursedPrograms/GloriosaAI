@@ -8,27 +8,32 @@ scripts = {
     "1": {
         "name": "Run 'Trainer'",
         "description": "Train a Generative Adversarial Network (GAN)",
-        "file_name": "trainer.py"
+        "file_name": "trainer.py",
+        "template": "trainer.html"
     },
     "2": {
         "name": "Run 'Video Encoder'",
         "description": "Encode a video using GloriosaAI",
-        "file_name": "video_encoder.py"
+        "file_name": "video_encoder.py",
+        "template": "video-encoder.html"
     },
     "3": {
         "name": "Run 'ModelOut'",
         "description": "Output images from trained models with GloriosaAI",
-        "file_name": "modelout.py"
+        "file_name": "modelout.py",
+        "template": "modelout.html"
     },
     "4": {
         "name": "Run 'Style Transfer'",
         "description": "Style an image with GloriosaAI",
-        "file_name": "style_transfer/styles.py"
+        "file_name": "style_transfer/styles.py",
+        "template": "style-transfer.html"
     },
     "00": {
         "name": "Run 'Install Dependencies'",
         "description": "Install necessary dependencies for GloriosaAI",
-        "file_name": "install_dependencies.py"
+        "file_name": "install_dependencies.py",
+        "template": "install-dependencies.html"
     },
 }
 
@@ -51,8 +56,9 @@ def run_script():
 
         if os.path.exists(script_file_path):
             try:
-                subprocess.run(["python", script_file_path])
-                return f"Script '{selected_script['name']}' executed successfully."
+                result = subprocess.run(["python", script_file_path], capture_output=True, text=True)
+                output = result.stdout
+                return render_template(selected_script['template'], script_name=selected_script['name'], output=output)
             except Exception as e:
                 return f"An error occurred while running the script: {e}"
         else:
