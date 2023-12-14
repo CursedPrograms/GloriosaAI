@@ -1,5 +1,11 @@
 scripts = {
     "1": {
+        "name": "Run 'Option",
+        "description": "AI Options",
+        "file_name": "main.py",
+        "template": "options.html"
+    },
+    "1": {
         "name": "Run 'Trainer'",
         "description": "Train a Generative Adversarial Network (GAN)",
         "file_name": "scripts/ai/art-gan/scripts/trainer.py",

@@ -19,7 +19,7 @@ current_script_dir = os.path.dirname(os.path.abspath(__file__))
 @app.route('/execute', methods=['POST'])
 def execute():
     command = request.form['command']
-    
+
     try:
         result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
         return render_template('result.html', result=result)
@@ -45,5 +45,3 @@ def internal_error_example():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-os.system("python main.py")
