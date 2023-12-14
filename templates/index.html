@@ -8,16 +8,18 @@
 </head>
 <body>
     <h1>Welcome to GloriosaAI!</h1>
-    <button id="executeButton">Execute main.py</button>
+    <button id="executeButton" data-script-name="main.py">Execute main.py</button>
 
     <script>
         document.getElementById('executeButton').addEventListener('click', function() {
+            const scriptName = this.getAttribute('data-script-name');
+
             fetch('/execute', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'command=python main.py',
+                body: `script_name=${scriptName}`,
             })
             .then(response => response.text())
             .then(result => {

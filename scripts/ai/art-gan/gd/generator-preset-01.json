@@ -1,0 +1,14 @@
+{
+    "generator": {
+      "layers": [
+        {"type": "Dense", "units": 8 * 8 * 1024, "input_dim": "latent_dim"},
+        {"type": "Reshape", "target_shape": [8, 8, 1024]},
+        {"type": "Conv2DTranspose", "filters": 512, "kernel_size": [4, 4], "strides": [2, 2], "padding": "same", "activation": "relu"},
+        {"type": "Conv2DTranspose", "filters": 256, "kernel_size": [4, 4], "strides": [2, 2], "padding": "same", "activation": "relu"},
+        {"type": "Conv2DTranspose", "filters": 128, "kernel_size": [4, 4], "strides": [2, 2], "padding": "same", "activation": "relu"},
+        {"type": "Conv2DTranspose", "filters": 64, "kernel_size": [4, 4], "strides": [2, 2], "padding": "same", "activation": "relu"},
+        {"type": "Conv2D", "filters": 3, "kernel_size": [3, 3], "padding": "same", "activation": "sigmoid"}
+      ]
+    }
+  }
+  

@@ -16,15 +16,13 @@ def get_data():
 
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 @app.route('/execute', methods=['POST'])
 def execute():
-    command = request.form['command']
-
-    try:
-        result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
-        return render_template('result.html', result=result)
-    except subprocess.CalledProcessError as e:
-        return render_template('result.html', result=f"Error: {e.output}")
+    script_name = request.form.get('script_name')
+    script_path = get_script_path(script_name)
+    result = execute_script(script_path)
+    return result
 
 @app.errorhandler(404)
 def not_found_handler(error):
