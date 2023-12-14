@@ -9,12 +9,9 @@ from tensorflow.keras.layers import Dense, Reshape, Flatten, Conv2D, Conv2DTrans
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from PIL import Image
-from preprocess_data import image_paths, labels 
+from system.preprocess_data import image_paths, labels 
 
-# Check available devices
 print(tf.config.experimental.list_physical_devices('GPU'))
-
-# Set GPU memory growth
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
     try:
@@ -23,11 +20,10 @@ if gpus:
     except RuntimeError as e:
         print(e)
 
-# Directories
-data_directory = 'training_data'
-output_base_dir = "output_images"
-model_save_base_dir = "output_models"
-checkpoint_dir = "model_checkpoints"
+data_directory = 'data/user-data/training_data'
+output_base_dir = "data/user-data/output_images"
+model_save_base_dir = "data/user-data/output_models"
+checkpoint_dir = "data/user-data/model_checkpoints"
 unique_identifier = int(time.time())
 output_dir = os.path.join(output_base_dir, f"output_image_{unique_identifier}")
 model_save_dir = os.path.join(model_save_base_dir, f"output_model_{unique_identifier}")
@@ -35,7 +31,6 @@ model_save_dir = os.path.join(model_save_base_dir, f"output_model_{unique_identi
 for directory in [output_dir, model_save_dir, checkpoint_dir]:
     os.makedirs(directory, exist_ok=True)
 
-# Hyperparameters
 def get_integer_input(prompt, recommended):
     while True:
         try:
@@ -66,11 +61,9 @@ learning_rate = get_float_input("Enter the learning rate (recommended: 0.0002): 
 use_learning_rate_scheduler = input("Use learning rate scheduler (y/n)? ").strip().lower() == "y"
 random_seed = get_integer_input("Enter the random seed: ", 0)
 
-# Image shape
 image_shape = (128, 128, 3)
 initial_epoch = 0;
 
-# Function to copy checkpoints
 def copy_checkpoint(original_path, new_name, model_name):
     checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_0.h5"
     new_checkpoint_path = f"model_checkpoints/gan_{model_name}_weights_epoch_1.h5"
@@ -84,11 +77,9 @@ def copy_checkpoint(original_path, new_name, model_name):
     else:
         print(f"{model_name} checkpoint file not found at: {checkpoint_path}.")
 
-# Copy checkpoints
 copy_checkpoint("generator", "gan_generator", "generator")
 copy_checkpoint("discriminator", "gan_discriminator", "discriminator")
 
-# Define the learning rate scheduler
 if use_learning_rate_scheduler:
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate=learning_rate,
@@ -98,11 +89,9 @@ if use_learning_rate_scheduler:
 else:
     lr_schedule = learning_rate
 
-# Random seeds
 np.random.seed(random_seed)
 tf.random.set_seed(random_seed)
 
-# Build generator
 def build_generator(latent_dim):
     generator = Sequential()
     generator.add(Dense(8 * 8 * 1024, input_dim=latent_dim))
@@ -114,7 +103,6 @@ def build_generator(latent_dim):
     generator.add(Conv2D(3, (3, 3), padding='same', activation='sigmoid'))
     return generator
 
-# Build discriminator
 def build_discriminator(input_shape):
     discriminator = Sequential()
     discriminator.add(Conv2D(64, (3, 3), strides=(2, 2), padding='same', input_shape=input_shape, activation='relu'))

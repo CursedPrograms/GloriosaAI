@@ -1,0 +1,8 @@
+generator = Sequential()
+generator.add(Dense(8 * 8 * 1024, input_dim=latent_dim))
+generator.add(Reshape((8, 8, 1024)))
+generator.add(Conv2DTranspose(512, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+generator.add(Conv2DTranspose(256, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+generator.add(Conv2DTranspose(128, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+generator.add(Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same', activation='relu'))
+generator.add(Conv2D(3, (3, 3), padding='same', activation='sigmoid'))

@@ -1,76 +1,49 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import os
 import subprocess
+from system.paths import scripts
+from system.error_handling import not_found_error, internal_error
 
 app = Flask(__name__)
-
-scripts = {
-    "1": {
-        "name": "Run 'Trainer'",
-        "description": "Train a Generative Adversarial Network (GAN)",
-        "file_name": "trainer.py",
-        "template": "trainer.html"
-    },
-    "2": {
-        "name": "Run 'Video Encoder'",
-        "description": "Encode a video using GloriosaAI",
-        "file_name": "video_encoder.py",
-        "template": "video-encoder.html"
-    },
-    "3": {
-        "name": "Run 'ModelOut'",
-        "description": "Output images from trained models with GloriosaAI",
-        "file_name": "modelout.py",
-        "template": "modelout.html"
-    },
-    "4": {
-        "name": "Run 'Style Transfer'",
-        "description": "Style an image with GloriosaAI",
-        "file_name": "style_transfer/styles.py",
-        "template": "style-transfer.html"
-    },
-    "00": {
-        "name": "Run 'Install Dependencies'",
-        "description": "Install necessary dependencies for GloriosaAI",
-        "file_name": "install_dependencies.py",
-        "template": "install-dependencies.html"
-    },
-}
-
-current_script_dir = os.path.dirname(os.path.abspath(__file__))
-
-main_script_path = os.path.join(current_script_dir, "main.py")
-if os.path.exists(main_script_path):
-    subprocess.run(["python", main_script_path])
 
 @app.route('/')
 def index():
     return render_template('index.html', scripts=scripts)
 
 def get_data():
-    data = {'message': 'Hello from Flask!'}
+    data = {'message': 'Welcome to GloriosaAI!'}
     return jsonify(data)
 
-@app.route('/run_script', methods=['POST'])
-def run_script():
-    user_choice = request.form.get('script_choice')
+current_script_dir = os.path.dirname(os.path.abspath(__file__))
 
-    if user_choice in scripts:
-        selected_script = scripts[user_choice]
-        script_file_name = selected_script["file_name"]
-        script_file_path = os.path.join(current_script_dir, script_file_name)
+@app.route('/execute', methods=['POST'])
+def execute():
+    command = request.form['command']
+    
+    try:
+        result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT)
+        return render_template('result.html', result=result)
+    except subprocess.CalledProcessError as e:
+        return render_template('result.html', result=f"Error: {e.output}")
 
-        if os.path.exists(script_file_path):
-            try:
-                result = subprocess.run(["python", script_file_path], capture_output=True, text=True)
-                output = result.stdout
-                return render_template(selected_script['template'], script_name=selected_script['name'], output=output)
-            except Exception as e:
-                return f"An error occurred while running the script: {e}"
-        else:
-            return f"Script file '{script_file_name}' does not exist."
-    else:
-        return "Invalid script choice."
+@app.errorhandler(404)
+def not_found_handler(error):
+    return not_found_error(error)
+
+@app.errorhandler(500)
+def internal_error_handler(error):
+    return internal_error(error)
+
+@app.route('/not_found_example')
+def not_found_example():
+    return "This resource is not found.", 404
+
+@app.route('/internal_error_example')
+def internal_error_example():
+    
+    raise Exception("Simulated internal server error")
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+os.system("python main.py")
