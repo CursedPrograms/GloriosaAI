@@ -1,19 +1,6 @@
 import os
 import subprocess
 
-def execute_script(script_file_path):
-    if os.path.exists(script_file_path):
-        try:
-            subprocess.run(["python", script_file_path])
-        except Exception as e:
-            return f"An error occurred while running the script: {e}"
-    else:
-        return f"Script file '{script_file_path}' does not exist."
-
-def get_script_path(script_name):
-    current_script_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(current_script_dir, script_name)
-
 def main():
     print("GloriosaAI")
 
