@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GloriosaAI Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main-style.css') }}">
+</head>
+<body>
+    <h1>Welcome to GloriosaAI!</h1>
+    <button id="executeButton" data-script-name="main.py">Execute main.py</button>
+
+    <script>
+        document.getElementById('executeButton').addEventListener('click', function() {
+            const scriptName = this.getAttribute('data-script-name');
+
+            fetch('/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `script_name=${scriptName}`,
+            })
+            .then(response => response.text())
+            .then(result => {
+                console.log(result);
+                window.location.href = 'options.html';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <footer id="dynamicFooter"></footer>
+    <script src="https://cursedprograms.github.io/cursedentertainment/scripts/footer.js"></script>
+</body>
+</html>
