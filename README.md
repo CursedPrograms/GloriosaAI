@@ -2,7 +2,7 @@
   <img alt="Python" src="https://img.shields.io/badge/python%20-%23323330.svg?&style=for-the-badge&logo=python&logoColor=white"/>
   <img alt="TensorFlow" src="https://img.shields.io/badge/tensorflow%20-%23323330.svg?&style=for-the-badge&logo=tensorflow&logoColor=white"/>
 </div>
-
+<iframe width="560" height="315" src="https://www.youtube.com/embed/j18XbKzATyA" frameborder="0" allowfullscreen></iframe>
 ## GloriosaAI
 ![GloriosaAI](https://github.com/CursedPrograms/GloriosaAI/raw/main/Gloriosa.jpg)
 ### Prerequisite Folders:
