@@ -87,6 +87,7 @@ pip install matplotlib
 pip install Pillow
 pip install opencv-python
 pip install pyinstaller
+pip install flask
 ```
 
 
