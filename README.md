@@ -51,7 +51,7 @@
 - Matplotlib 3.8.2
 - Pillow 10.1.0
 - OpenCV-Python 4.8.1.78
-- Flask 3.0.0
+- Flask==2.1.1
 
 ### Compiler:
 
