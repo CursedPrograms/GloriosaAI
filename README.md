@@ -102,6 +102,9 @@ To make the setup script executable, run the following command in your terminal:
 ```bash
 chmod +x setup.sh
 ```
+<p align="center">
+  <img src="https://github.com/CursedPrograms/GloriosaAI/raw/main/Gloriosa_Cover.jpg" alt="Gloriosa AI Cover">
+</p>
 
 <a href="https://cursed-entertainment.itch.io/" target="_blank">
     <img src="https://github.com/CursedPrograms/cursedentertainment/raw/main/images/logos/logo-wide-grey.png"
