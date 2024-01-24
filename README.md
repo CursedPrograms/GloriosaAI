@@ -47,6 +47,10 @@
 - **Random Seed**:
   - Seeds the random number generator for reproducibility.
 
+<p align="center">
+  <img src="https://github.com/CursedPrograms/GloriosaAI/raw/main/gloriosa.gif" alt="Gloriosa AI">
+</p>
+
 ### Prerequisites:
 
 - TensorFlow 2.14.0
