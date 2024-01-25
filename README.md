@@ -8,7 +8,7 @@
 </div>
 
 ## GloriosaAI
-![GloriosaAI](https://github.com/CursedPrograms/GloriosaAI/raw/main/Gloriosa.jpg)
+![GloriosaAI](https://github.com/CursedPrograms/GloriosaAI/raw/main/demo_images/gloriosa.jpg)
 ### Prerequisite Folders:
 
 ### Trainer
@@ -46,11 +46,10 @@
 
 - **Random Seed**:
   - Seeds the random number generator for reproducibility.
-
-<p align="center">
-  <img src="https://github.com/CursedPrograms/GloriosaAI/raw/main/gloriosa.gif" alt="Gloriosa AI">
 </p>
+<br>
 
+![GloriosaAI](https://github.com/CursedPrograms/GloriosaAI/raw/main/demo_images/gloriosa.gif)
 ### Prerequisites:
 
 - TensorFlow 2.14.0
