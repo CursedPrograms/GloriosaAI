@@ -1,0 +1,16 @@
+{
+  "Config": {
+    "AppName": "GloriosaAI",
+    "Description": "",
+    "ProjectStructure": {
+      "MainScript": "main.py",
+      "TrainerScript": "scripts/trainer.py",
+      "ModelOutScript": "scripts/modelout.py",
+      "VideoEncoderScript": "scripts/video-encoder.py",
+      "DependenciesScript": "scripts/install-dependencies.py"
+    },
+    "Scripts": {
+
+    }
+  }
+}

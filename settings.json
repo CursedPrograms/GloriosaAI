@@ -1,0 +1,17 @@
+{
+  "epochs": 10000,
+  "batch_size": 1,
+  "latent_dim": 128,
+  "generation_interval": 25,
+  "learning_rate": 0.0002,
+  "use_learning_rate_scheduler": false,
+  "random_seed": 0,
+  "directories": {
+    "model_checkpoints": "./output/model_checkpoints",
+    "training_images": "./output/training_images",
+    "training_models": "./output/models",
+    "video": "./output/video",
+    "video_frames": "./output/video_frames",
+    "training_data": "training_data/"
+  }
+}

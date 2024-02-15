@@ -1,0 +1,24 @@
+*.json linguist-vendored=false
+*.json linguist-generated=false
+*.json linguist-documentation=false
+*.json linguist-detectable=true
+
+*.ini linguist-vendored=false
+*.ini linguist-generated=false
+*.ini linguist-documentation=false
+*.ini linguist-detectable=true
+
+*.txt linguist-vendored=false
+*.txt linguist-generated=false
+*.txt linguist-documentation=false
+*.txt linguist-detectable=true
+
+*.xml linguist-vendored=false
+*.xml linguist-generated=false
+*.xml linguist-documentation=false
+*.xml linguist-detectable=true
+
+*.exe linguist-vendored=false
+*.exe linguist-generated=false
+*.exe linguist-documentation=false
+*.exe linguist-detectable=true
