@@ -187,7 +187,7 @@ chmod +x setup.sh
 - [Image-Generator](https://github.com/CursedPrograms/Image-Generator)
 
 <div align="center">
-© Cursed Entertainment 2024
+Cursed Entertainment 2024
 </div>
 
 <div align="center">
