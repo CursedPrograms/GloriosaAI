@@ -187,6 +187,10 @@ chmod +x setup.sh
 - [Image-Generator](https://github.com/CursedPrograms/Image-Generator)
 
 <div align="center">
+© Cursed Entertainment 2024
+</div>
+
+<div align="center">
 <a href="https://cursed-entertainment.itch.io/" target="_blank">
     <img src="https://github.com/CursedPrograms/cursedentertainment/raw/main/images/logos/logo-wide-grey.png"
         alt="CursedEntertainment Logo" style="width:250px;">
