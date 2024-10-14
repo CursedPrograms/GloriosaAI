@@ -1,3 +1,5 @@
+[![Twitter: @NorowaretaGemu](https://img.shields.io/badge/X-@NorowaretaGemu-blue.svg?style=flat)](https://x.com/NorowaretaGemu)
+
 <br>
 <div align="center">
   <a href="https://ko-fi.com/cursedentertainment">
