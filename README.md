@@ -125,12 +125,57 @@
 
 ### Prerequisites:
 
-- TensorFlow 2.14.0
-- Numpy 1.26.2
-- Matplotlib 3.8.2
-- Pillow 10.1.0
-- OpenCV-Python 4.8.1.78
-- Flask==2.1.1
+Package            Version
+------------------ -----------
+absl-py            2.4.0
+astunparse         1.6.3
+certifi            2026.2.25
+charset-normalizer 3.4.7
+click              8.3.1
+contourpy          1.3.3
+cycler             0.12.1
+Flask              2.1.1
+flatbuffers        25.12.19
+fonttools          4.62.1
+gast               0.7.0
+google-pasta       0.2.0
+grpcio             1.80.0
+h5py               3.14.0
+idna               3.11
+itsdangerous       2.2.0
+Jinja2             3.1.6
+keras              3.14.0
+kiwisolver         1.5.0
+libclang           18.1.1
+markdown-it-py     4.0.0
+MarkupSafe         3.0.3
+matplotlib         3.8.2
+mdurl              0.1.2
+ml_dtypes          0.5.4
+namex              0.1.0
+numpy              1.26.2
+opencv-python      4.8.1.78
+opt_einsum         3.4.0
+optree             0.19.0
+packaging          26.0
+Pillow             10.1.0
+pip                26.0.1
+protobuf           7.34.1
+Pygments           2.20.0
+pyparsing          3.3.2
+python-dateutil    2.9.0.post0
+requests           2.33.1
+rich               14.3.3
+setuptools         82.0.1
+six                1.17.0
+tensorflow         2.21.0
+termcolor          3.3.0
+typing_extensions  4.15.0
+urllib3            2.6.3
+Werkzeug           3.1.8
+wheel              0.46.3
+wrapt              2.1.2
+
 
 ### Compiler:
 
