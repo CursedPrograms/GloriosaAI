@@ -196,9 +196,13 @@ wrapt              2.1.2
 <br>
 
 ## How to Run:
+
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
+
 ```bash
 pip install opencv-contrib-python
 ```
@@ -225,9 +229,6 @@ pip install flask
 ```bash
 python main.py
 ```
-
-To make the setup script executable, run the following command in your terminal:
-
 ```bash
 chmod +x setup.sh
 ```
