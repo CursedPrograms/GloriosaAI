@@ -1,8 +1,9 @@
 {
   "epochs": 10000,
-  "batch_size": 1,
+  "batch_size": 16,
   "latent_dim": 128,
   "generation_interval": 25,
+  "checkpoint_interval": 500,
   "learning_rate": 0.0002,
   "use_learning_rate_scheduler": false,
   "random_seed": 0,

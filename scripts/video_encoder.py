@@ -1,73 +1,72 @@
-import os
-import cv2
+"""Encode the PNG frames in the video-frames folder into an mp4."""
+import argparse
 import sys
-import json
-from glob import glob
+from pathlib import Path
 
-def display_warning(message):
-    print(f"\033[91m{message}\033[0m") 
+from common import load_settings, resolve_dir
 
-# Assuming your JSON is stored in a file named 'config.json'
-with open("settings.json", "r") as settings_file:
-    settings = json.load(settings_file)
 
-input_folder = settings["directories"]["video_frames"]
-output_folder = settings["directories"]["video"]
-output_base_name = "output_video"
-output_extension = ".mp4"
-max_videos_to_keep = 5  
+def encode_video(frames_dir, output_dir, fps=30.0, keep=5, base_name="output_video"):
+    """Write frames (sorted by name) to the next free `<base_name>_N.mp4`; return its path."""
+    import cv2  # imported lazily so the module is cheap to import
 
-if not os.path.exists(input_folder) or not any(file.endswith(".png") for file in os.listdir(input_folder)):
-    display_warning("Warning: No PNG files found in the input folder or the input folder does not exist.")
-    sys.exit()
+    frames = sorted(Path(frames_dir).glob("*.png"))
+    if not frames:
+        print(f"No PNG frames found in {frames_dir}.")
+        return None
 
-os.makedirs(output_folder, exist_ok=True)
+    first = cv2.imread(str(frames[0]))
+    if first is None:
+        print(f"Could not read {frames[0]}.")
+        return None
+    height, width = first.shape[:2]
 
-image_files = sorted(os.listdir(input_folder))
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    number = 1
+    while (output_dir / f"{base_name}_{number}.mp4").exists():
+        number += 1
+    output_path = output_dir / f"{base_name}_{number}.mp4"
 
-if not os.path.exists(input_folder):
-    display_warning("Warning: The input folder does not exist.")
-    sys.exit()
+    writer = cv2.VideoWriter(str(output_path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+    if not writer.isOpened():
+        print(f"Could not open a video writer for {output_path}.")
+        return None
+    try:
+        for frame_path in frames:
+            frame = cv2.imread(str(frame_path))
+            if frame is None:
+                print(f"Skipping unreadable frame {frame_path.name}")
+                continue
+            if frame.shape[:2] != (height, width):
+                frame = cv2.resize(frame, (width, height))
+            writer.write(frame)
+    finally:
+        writer.release()
+    print(f"Video saved to {output_path} ({len(frames)} frames)")
 
-png_files = [file for file in os.listdir(input_folder) if file.endswith(".png")]
+    # Keep only the newest `keep` videos, ordered by their numeric suffix.
+    def number_of(path):
+        return int(path.stem.rsplit("_", 1)[1])
 
-if not png_files:
-    display_warning("Warning: No PNG files found in the input folder.")
-    sys.exit()
+    videos = sorted(output_dir.glob(f"{base_name}_*.mp4"), key=number_of)
+    if keep > 0:
+        for old in videos[:-keep]:
+            old.unlink()
+    return output_path
 
-first_image = cv2.imread(os.path.join(input_folder, image_files[0]))
-height, width, layers = first_image.shape
 
-output_number = 1
+def main(argv=None):
+    settings = load_settings()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--frames-dir", default=settings["directories"]["video_frames"])
+    parser.add_argument("--output-dir", default=settings["directories"]["video"])
+    parser.add_argument("--fps", type=float, default=30.0)
+    parser.add_argument("--keep", type=int, default=5, help="videos to keep (0 = keep all)")
+    args = parser.parse_args(argv)
+    result = encode_video(resolve_dir(args.frames_dir), resolve_dir(args.output_dir), args.fps, args.keep)
+    return 0 if result else 1
 
-while True:
-    output_path = os.path.join(output_folder, f"{output_base_name}_{output_number}{output_extension}")
-    if not os.path.exists(output_path):
-        break
-    output_number += 1
-
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')         
-out = cv2.VideoWriter(output_path, fourcc, 30.0, (width, height))
-
-for image_file in image_files:
-    if image_file.endswith(".png"):
-        image_path = os.path.join(input_folder, image_file)
-        frame = cv2.imread(image_path)
-
-        if not out.isOpened():
-            output_path = os.path.join(output_folder, f"{output_base_name}_{output_number}{output_extension}")
-            out = cv2.VideoWriter(output_path, fourcc, 30.0, (width, height))
-
-        out.write(frame)
-
-out.release()
-
-print(f"Video saved to {output_path}")
-
-existing_videos = sorted(glob(os.path.join(output_folder, f"{output_base_name}_*{output_extension}")))
-videos_to_remove = max(0, len(existing_videos) - max_videos_to_keep)
-for video_path in existing_videos[:videos_to_remove]:
-    os.remove(video_path)
 
 if __name__ == "__main__":
-    sys.exit()
+    sys.exit(main())

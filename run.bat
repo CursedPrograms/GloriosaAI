@@ -1,15 +1,6 @@
 @echo off
-
-set "VENV_DIR=psdenv"
-
-rem 
-if not exist "%VENV_DIR%" (
-    rem 
-    python -m venv "%VENV_DIR%"
-)
-
-rem 
-call "%VENV_DIR%\Scripts\activate" && python main.py
-
-rem 
+rem Run GloriosaAI, setting up the virtual environment first if needed.
+cd /d "%~dp0"
+if not exist psdenv call setup.bat
+psdenv\Scripts\python main.py
 pause

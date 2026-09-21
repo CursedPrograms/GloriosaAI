@@ -1,26 +1,19 @@
+"""Install requirements.txt into the Python environment running this script."""
 import subprocess
-import os
+import sys
 
-def install_dependencies():
-    try:
-        # Get the directory of the current script
-        script_directory = os.path.dirname(os.path.abspath(__file__))
+from common import ROOT
 
-        # Specify the path to the requirements.txt file relative to the script's location
-        requirements_file_path = os.path.join(script_directory, '../requirements.txt')
 
-        # Activate the virtual environment if it exists
-        venv_activate_path = os.path.join(script_directory, 'psdenv/Scripts/activate')
-        if os.path.exists(venv_activate_path):
-            subprocess.run([venv_activate_path], shell=True)
-
-        # Install dependencies using pip
-        subprocess.run(['pip', 'install', '-r', requirements_file_path])
-
+def main():
+    requirements = ROOT / "requirements.txt"
+    result = subprocess.run([sys.executable, "-m", "pip", "install", "-r", str(requirements)])
+    if result.returncode == 0:
         print("Dependencies installed successfully.")
+    else:
+        print(f"pip failed with exit code {result.returncode}.")
+    return result.returncode
 
-    except Exception as e:
-        print(f"Error installing dependencies: {e}")
 
 if __name__ == "__main__":
-    install_dependencies()
+    sys.exit(main())

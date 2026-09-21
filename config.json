@@ -1,16 +1,14 @@
 {
   "Config": {
     "AppName": "GloriosaAI",
-    "Description": "",
+    "Description": "Train a GAN on your own images and turn its progress into video.",
     "ProjectStructure": {
       "MainScript": "main.py",
       "TrainerScript": "scripts/trainer.py",
       "ModelOutScript": "scripts/modelout.py",
-      "VideoEncoderScript": "scripts/video-encoder.py",
-      "DependenciesScript": "scripts/install-dependencies.py"
-    },
-    "Scripts": {
-
+      "VideoEncoderScript": "scripts/video_encoder.py",
+      "ImageProcessorScript": "scripts/image_processor.py",
+      "DependenciesScript": "scripts/install_dependencies.py"
     }
   }
 }

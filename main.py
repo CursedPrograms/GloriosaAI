@@ -1,71 +1,55 @@
-import os
-import subprocess
 import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+SCRIPTS = {
+    "1": ("Trainer", "Train a Generative Adversarial Network (GAN)", ["scripts/trainer.py", "--interactive"]),
+    "2": ("Video encoder", "Encode a video from saved sample images", ["scripts/video_encoder.py"]),
+    "3": ("Model output", "Generate images from trained models", ["scripts/modelout.py"]),
+    "4": ("Image processor", "Prepare images for training", ["scripts/image_processor.py"]),
+    "00": ("Install dependencies", "Install the packages GloriosaAI needs", ["scripts/install_dependencies.py"]),
+}
+
+
+def app_name():
+    try:
+        config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
+        return config.get("Config", {}).get("AppName", "GloriosaAI")
+    except (OSError, json.JSONDecodeError):
+        return "GloriosaAI"
+
+
+def run_script(command):
+    script = ROOT / command[0]
+    if not script.exists():
+        print(f"Script '{command[0]}' does not exist.")
+        return
+    try:
+        subprocess.run([sys.executable, str(script), *command[1:]], cwd=ROOT)
+    except KeyboardInterrupt:
+        print("\nStopped.")
+
 
 def main():
-    with open('config.json') as json_file:
-        config_data = json.load(json_file)
-
-    # Get the project name from the JSON data
-    app_name = config_data.get('Config', {}).get('AppName', 'default_app')
-
-    # Print the actual app name value
-    print(app_name)
-
-    scripts = {
-        "1": {
-            "name": "Run 'trainer.py'",
-            "description": "Train a Generative Adversarial Network (GAN)",
-            "file_name": "scripts/trainer.py"
-        },
-        "2": {
-            "name": "Run 'video_encoder.py",
-            "description": "Encode a video using GloriosaAI",
-            "file_name": "scripts/video_encoder.py"
-        },    
-        "3": {
-            "name": "Run 'modelout.py'",
-            "description": "Output images from trained models with GloriosaAI",
-            "file_name": "scripts/modelout.py"
-        },
-        "4": {
-            "name": "Run 'image-processor.py'",
-            "description": "Prepare images for GloriosaAI",
-            "file_name": "scripts/image_processor.py"
-        },
-        "00": {
-            "name": "Run 'install_dependencies.py'",
-            "description": "Install necessary dependencies for GloriosaAI",
-            "file_name": "scripts/install_dependencies.py"
-        },
-    }
-
-    current_script_dir = os.path.dirname(os.path.abspath(__file__))
-
+    print(app_name())
     while True:
-        print("\nAvailable Scripts:")
-        for key, script_info in scripts.items():
-            print(f"{key}: {script_info['name']} - {script_info['description']}")
-        
-        user_choice = input("Enter the number of the script you want to run (or 'q' to quit): ").strip()
-        
-        if user_choice == 'q':
+        print("\nAvailable scripts:")
+        for key, (name, description, _) in SCRIPTS.items():
+            print(f"  {key}: {name} - {description}")
+        try:
+            choice = input("Enter a number (or 'q' to quit): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
             break
-        
-        if user_choice in scripts:
-            selected_script = scripts[user_choice]
-            script_file_name = selected_script["file_name"]
-            script_file_path = os.path.join(current_script_dir, script_file_name)
-            
-            if os.path.exists(script_file_path):
-                try:
-                    subprocess.run(["python", script_file_path])
-                except Exception as e:
-                    print(f"An error occurred while running the script: {e}")
-            else:
-                print(f"Script file '{script_file_name}' does not exist.")
+        if choice in ("q", "quit", "exit"):
+            break
+        if choice in SCRIPTS:
+            run_script(SCRIPTS[choice][2])
         else:
             print("Invalid choice. Please select a valid script number.")
+
 
 if __name__ == "__main__":
     main()

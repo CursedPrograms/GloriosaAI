@@ -1,51 +1,64 @@
-from PIL import Image
-import os
+"""Turn raw images into augmented 128x128 RGB training images."""
+import argparse
 import random
+import sys
+from pathlib import Path
 
-# Set the input and output directories
-input_dir = './unprocessed_images'
-output_dir = './training_data/processed_images'
-os.makedirs(output_dir, exist_ok=True)
+from PIL import Image
 
-# Set the size of the processed images
-processed_size = (128, 128)
+from common import IMAGE_SIZE, ROOT, list_images
 
-# Set the range for scaling and zooming
-min_scale_factor = 0.8
-max_scale_factor = 1.2
 
-# Set the number of variations for each image
-num_variations = 3
+def process_image(image, size=IMAGE_SIZE, min_zoom=0.8, flip_vertical=False, rng=random):
+    """Random square crop (keeping `min_zoom`..1 of the short side), random flips, resize."""
+    image = image.convert("RGB")
+    width, height = image.size
+    side = int(min(width, height) * rng.uniform(min_zoom, 1.0))
+    side = max(side, 1)
+    left = rng.randint(0, width - side)
+    top = rng.randint(0, height - side)
+    image = image.crop((left, top, left + side, top + side)).resize((size, size), Image.LANCZOS)
+    if rng.random() < 0.5:
+        image = image.transpose(Image.FLIP_LEFT_RIGHT)
+    if flip_vertical and rng.random() < 0.5:
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    return image
 
-# Iterate through each image in the input directory
-for filename in os.listdir(input_dir):
-    if filename.endswith(('.jpg', '.jpeg', '.png', '.gif')):
-        # Open the image
-        input_path = os.path.join(input_dir, filename)
-        image = Image.open(input_path)
 
-        for variation in range(num_variations):
-            # Create a copy of the original image for each variation
-            processed_image = image.copy()
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input-dir", default=str(ROOT / "unprocessed_images"))
+    parser.add_argument("--output-dir", default=str(ROOT / "training_data" / "processed_images"))
+    parser.add_argument("--variations", type=int, default=3, help="augmented copies per image")
+    parser.add_argument("--size", type=int, default=IMAGE_SIZE)
+    parser.add_argument("--min-zoom", type=float, default=0.8)
+    parser.add_argument("--vflip", action="store_true", help="also flip vertically at random")
+    parser.add_argument("--seed", type=int, default=None)
+    args = parser.parse_args(argv)
 
-            # Resize the image to the desired size
-            processed_image = processed_image.resize(processed_size)
+    files = list_images(args.input_dir)
+    if not files:
+        print(f"No images found in {args.input_dir}.")
+        return 1
 
-            # Randomly scale the image
-            scale_factor = random.uniform(min_scale_factor, max_scale_factor)
-            new_size = (int(processed_size[0] * scale_factor), int(processed_size[1] * scale_factor))
-            processed_image = processed_image.resize(new_size)
+    rng = random.Random(args.seed)
+    out_dir = Path(args.output_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-            # Randomly flip the image horizontally
-            if random.choice([True, False]):
-                processed_image = processed_image.transpose(Image.FLIP_LEFT_RIGHT)
+    written = 0
+    for path in files:
+        try:
+            with Image.open(path) as image:
+                image.load()
+                for variation in range(args.variations):
+                    result = process_image(image, args.size, args.min_zoom, args.vflip, rng)
+                    result.save(out_dir / f"processed_{path.stem}_{variation}.png")
+                    written += 1
+        except OSError as e:
+            print(f"Skipping {path.name}: {e}")
+    print(f"Wrote {written} images to {out_dir}")
+    return 0
 
-            # Randomly flip the image vertically
-            if random.choice([True, False]):
-                processed_image = processed_image.transpose(Image.FLIP_TOP_BOTTOM)
 
-            # Save the processed image
-            output_path = os.path.join(output_dir, f'processed_{filename.split(".")[0]}_{variation}.png')
-            processed_image.save(output_path)
-
-print(f'Images processed and saved in {output_dir}')
+if __name__ == "__main__":
+    sys.exit(main())

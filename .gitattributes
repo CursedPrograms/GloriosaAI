@@ -22,3 +22,6 @@
 *.exe linguist-generated=false
 *.exe linguist-documentation=false
 *.exe linguist-detectable=true
+
+*.sh text eol=lf
+*.bat text eol=crlf
